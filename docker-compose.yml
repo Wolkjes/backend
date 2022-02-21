@@ -52,6 +52,22 @@ services:
       - '3000:3000'
     volumes:
       - ./grafana.ini:/etc/grafana/grafana.ini  
+    
+  postgres:
+    image: postgres
+    restart: always
+    environment: 
+          - POSTGRES_USER=admin
+          - POSTGRES_PASSWORD=admin
+    ports:
+          - '5438:5432'
+    volumes:
+          - ./postgres-data:/var/lib/postgresql/data
+          # copy the sql script to create tables
+          # - ./sql/create_tables.sql:/docker-entrypoint-initdb.d/create_tables.sql
+          # copy the sql script to fill tables
+          # - ./sql/fill_tables.sql:/docker-entrypoint-initdb.d/fill_tables.sql
+
       
 volumes:
   grafana_data: {}
