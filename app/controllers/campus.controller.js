@@ -18,10 +18,10 @@ exports.create = (req, res) => {
   console.log(`Running query to create campus PostgreSQL server: ${config.host}`);
   
   var name = req.body.name;
-  var warning = 700;
-  var critical_value = 800;
+  var warning_value = req.body.warning_value;
+  var critical_value = req.body.critical_value;
 
-  const query = "INSERT INTO campus(name, warning_value, critical_value) VALUES('" + name + "', " + warning + ", " + critical_value + ")  ON CONFLICT DO NOTHING";
+  const query = "INSERT INTO campus(name, warning_value, critical_value) VALUES('" + name + ", " + warning_value + ", " + critical_value + ")";
   const queryGet = "select * from campus order by campus_id desc limit 1";
 
 
@@ -69,8 +69,26 @@ exports.findAll = (req, res) => {
       });
 };
 
-exports.findLatest = (req, res) => {
-  console.log(`Running query to find lastest PostgreSQL server: ${config.host}`);
+
+// // Find a single Campus with an id
+// exports.findOne = (req, res) => {
+//   const campus_id = req.params.id;
+//   Campus.findByPk(campus_id)
+//     .then(data => {
+//       if (data) {
+//         res.send(data);
+//       } else {
+//         res.status(404).send({
+//           message: `Cannot find Campus with id=${campus_id}.`
+//         });
+//       }
+//     })
+//     .catch(err => {
+//       res.status(500).send({
+//         message: "Error retrieving Campus with id=" + campus_id
+//       });
+//     });
+// };
 
   const query = "select * from campus order by campus_id asc limit 1";
 
