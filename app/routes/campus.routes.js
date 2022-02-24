@@ -13,5 +13,5 @@ module.exports = app => {
 
     router.delete("/:campus_id", campus.delete);
 
-    app.use('/wolkjes/campus', router);
+    app.use("/wolkjes/campus", router);
 }

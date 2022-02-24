@@ -15,14 +15,13 @@ client.connect();
 
 // Create and Save a new Campus
 exports.create = (req, res) => {
-  console.log(`Running query to PostgreSQL server: ${config.host}`);
+  console.log(`Running query to create campus PostgreSQL server: ${config.host}`);
   
   var name = req.body.name;
-  var good = req.body.good_value;
-  var max = req.body.max_value;
-  var critical_value = req.body.critical_value;
+  var warning = 700;
+  var critical_value = 800;
 
-  const query = "INSERT INTO campus(name, good_value, max_value, critical_value) VALUES('" + name + "', " + good + ", " + max + ", " + critical_value + ")";
+  const query = "INSERT INTO campus(name, warning_value, critical_value) VALUES('" + name + "', " + warning + ", " + critical_value + ")";
   const queryGet = "select * from campus order by campus_id desc limit 1";
 
 
@@ -50,7 +49,7 @@ exports.create = (req, res) => {
 
 // Retrieve all Campus from the database.
 exports.findAll = (req, res) => {
-  console.log(`Running query to PostgreSQL server: ${config.host}`);
+  console.log(`Running query to find all campuses PostgreSQL server: ${config.host}`);
 
   const query = "SELECT * FROM campus";
 
@@ -72,6 +71,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Campus with an id
 exports.findOne = (req, res) => {
+  console.log(`Running query to find one campuses PostgreSQL server: ${config.host}`);
   const query = "SELECT * FROM campus where campus_id=" + req.params.campus_id;
 
   client.query(query)
@@ -90,6 +90,7 @@ exports.findOne = (req, res) => {
 
 // Update a Campus by the id in the request
 exports.update = (req, res) => {
+  console.log(`Running query to update campuses PostgreSQL server: ${config.host}`)
   const campus_id = req.params.campus_id;
   const name = req.body.name;
 
@@ -118,6 +119,7 @@ exports.update = (req, res) => {
 
 // Delete a Campus with the specified id in the request
 exports.delete = (req, res) => {
+  console.log(`Running query to delete campuses PostgreSQL server: ${config.host}`)
   const campus_id = req.params.campus_id;
 
   const query = "DELETE FROM campus WHERE campus_id=" + campus_id;
