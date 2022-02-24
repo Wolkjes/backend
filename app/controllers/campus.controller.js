@@ -51,7 +51,7 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
   console.log(`Running query to find all campuses PostgreSQL server: ${config.host}`);
 
-  const query = "SELECT * FROM campus";
+  const query = "SELECT * FROM campus order by campus_id asc";
 
   client.query(query)
       .then(data => {
@@ -61,6 +61,22 @@ exports.findAll = (req, res) => {
               console.log(`Read: ${JSON.stringify(row)}`);
           });
 
+          res.send(rows);
+
+      })
+      .catch(err => {
+          console.log(err);
+      });
+};
+
+exports.findLatest = (req, res) => {
+  console.log(`Running query to find lastest PostgreSQL server: ${config.host}`);
+
+  const query = "select * from campus order by campus_id asc limit 1";
+
+  client.query(query)
+      .then(data => {
+          const rows = data.rows;
           res.send(rows);
 
       })
@@ -128,7 +144,17 @@ exports.delete = (req, res) => {
     if (err) {
         console.error(err);
     }else{
-      res.send("Delete succesvol");
+      const queryGet = "select * from campus order by campus_id asc limit 1";
+
+      client.query(queryGet)
+      .then(data => {
+          const rows = data.rows;
+          res.send(rows);
+
+      })
+      .catch(err => {
+          console.log(err);
+      });
     }
   });
 };

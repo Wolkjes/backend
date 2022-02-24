@@ -7,6 +7,8 @@ module.exports = app => {
 
     router.get("/", campus.findAll);
 
+    router.get("/latest", campus.findLatest);
+
     router.get("/:campus_id", campus.findOne);
 
     router.put("/:campus_id", campus.update);
