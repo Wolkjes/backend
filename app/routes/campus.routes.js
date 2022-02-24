@@ -7,13 +7,11 @@ module.exports = app => {
 
     router.get("/", campus.findAll);
 
-    // router.get("/:campus_id", campus.findOne);
+    router.get("/:campus_id", campus.findOne);
 
-    // router.put("/:campus_id", campus.update);
+    router.put("/:campus_id", campus.update);
 
-    // router.delete("/:campus_id", campus.delete);
-
-    // router.delete("/", campus.deleteAll);
+    router.delete("/:campus_id", campus.delete);
 
     app.use('/wolkjes/campus', router);
 }

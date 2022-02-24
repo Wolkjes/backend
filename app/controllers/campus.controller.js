@@ -70,87 +70,63 @@ exports.findAll = (req, res) => {
       });
 };
 
-// // Find a single Campus with an id
-// exports.findOne = (req, res) => {
-//   const campus_id = req.params.id;
-//   Campus.findByPk(campus_id)
-//     .then(data => {
-//       if (data) {
-//         res.send(data);
-//       } else {
-//         res.status(404).send({
-//           message: `Cannot find Campus with id=${campus_id}.`
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Error retrieving Campus with id=" + campus_id
-//       });
-//     });
-// };
+// Find a single Campus with an id
+exports.findOne = (req, res) => {
+  const query = "SELECT * FROM campus where campus_id=" + req.params.campus_id;
 
-// // Update a Campus by the id in the request
-// exports.update = (req, res) => {
-//   const campus_id = req.params.campus_id;
-//   Campus.update(req.body, {
-//     where: { campus_id: campus_id }
-//   })
-//     .then(num => {
-//       if (num == 1) {
-//         res.send({
-//           message: "Campus was updated successfully."
-//         });
-//       } else {
-//         res.send({
-//           message: `Cannot update Campus with id=${campus_id}. Maybe Campus was not found or req.body is empty!`
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Error updating Campus with id=" + campus_id
-//       });
-//     });
-// };
+  client.query(query)
+      .then(data => {
+          const rows = data.rows;
 
-// // Delete a Campus with the specified id in the request
-// exports.delete = (req, res) => {
-//   const campus_id = req.params.id;
-//   Campus.destroy({
-//     where: { campus_id: campus_id }
-//   })
-//     .then(num => {
-//       if (num == 1) {
-//         res.send({
-//           message: "Campus was deleted successfully!"
-//         });
-//       } else {
-//         res.send({
-//           message: `Cannot delete Campus with id=${campus_id}. Maybe Campus was not found!`
-//         });
-//       }
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message: "Could not delete Campus with id=" + campus_id
-//       });
-//     });
-// };
+          console.log(`Read: ${JSON.stringify(rows)}`);
 
-// // Delete all Campus from the database.
-// exports.deleteAll = (req, res) => {
-//   Campus.destroy({
-//     where: {},
-//     truncate: false
-//   })
-//     .then(nums => {
-//       res.send({ message: `${nums} Campus were deleted successfully!` });
-//     })
-//     .catch(err => {
-//       res.status(500).send({
-//         message:
-//           err.message || "Some error occurred while removing all Campus."
-//       });
-//     });
-// };
+          res.send(rows);
+
+      })
+      .catch(err => {
+          console.log(err);
+      });
+};
+
+// Update a Campus by the id in the request
+exports.update = (req, res) => {
+  const campus_id = req.params.campus_id;
+  const name = req.body.name;
+
+  const query = "UPDATE campus SET name='" + name + "' WHERE campus_id=" + campus_id;
+  const queryGet = "SELECT * FROM campus where campus_id=" + campus_id;
+
+  client.query(query, (err) => {
+    if (err) {
+        console.error(err);
+    }else{
+      client.query(queryGet)
+      .then(data => {
+          const rows = data.rows;
+
+          rows.map(row => {
+              console.log(`Read: ${JSON.stringify(row)}`);
+          });
+          res.send(rows);
+      })
+      .catch(err => {
+          console.log(err);
+      });
+    }
+  });
+};
+
+// Delete a Campus with the specified id in the request
+exports.delete = (req, res) => {
+  const campus_id = req.params.campus_id;
+
+  const query = "DELETE FROM campus WHERE campus_id=" + campus_id;
+
+  client.query(query, (err) => {
+    if (err) {
+        console.error(err);
+    }else{
+      res.send("Delete succesvol");
+    }
+  });
+};
