@@ -1,5 +1,6 @@
 const dbConfig = require("../config/db.config.js");
 const pg = require('pg');
+const res = require("express/lib/response");
 
 const config = {
   host: dbConfig.HOST,
