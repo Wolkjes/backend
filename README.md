@@ -12,10 +12,6 @@ curl --location --request POST 'localhost:8080/auth/signin' \
 --data-urlencode 'password=admin'
 ```
 
-```
-node server.js
-```
-
 To run the backend go in the root directory and run:
 ```
 node server.js
