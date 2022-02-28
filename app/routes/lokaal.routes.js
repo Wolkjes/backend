@@ -22,6 +22,6 @@ module.exports = app => {
     userRouter.get("/:campus_id", lokaal.findAll);
     // userRouter.get("/:lokaal_id", lokaal.findOne);
 
-    app.use("/wolkjes/lokaal", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    app.use("/wolkjes/lokaal", [authJwt.verifyToken], userRouter);
     app.use("/wolkjes/lokaal", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }

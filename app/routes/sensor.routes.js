@@ -23,6 +23,6 @@ module.exports = app => {
     userRouter.get("/", sensor.findAll);
     userRouter.get("/:sensor_id", sensor.findOne);
 
-    app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    app.use("/wolkjes/sensor", [authJwt.verifyToken], userRouter);
     app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }
