@@ -60,7 +60,7 @@ exports.findAll = (req, res) => {
 // Find a single Campus with an id
 exports.findOne = (req, res) => {
   const query = "SELECT * FROM sensor INNER JOIN lokaal using(lokaal_id)  where sensor_id='" + req.params.sensor_id + "'";
-
+  
   client.query(query)
       .then(data => {
           const rows = data.rows;
@@ -74,6 +74,25 @@ exports.findOne = (req, res) => {
           console.log(err);
       });
 };
+
+//??
+exports.findhim = (req, res) => {
+  const query = "SELECT * FROM sensor where sensor_id='" + req.params.sensor_id + "'";
+  
+  client.query(query)
+      .then(data => {
+          const rows = data.rows;
+
+          console.log(`Read: ${JSON.stringify(rows)}`);
+
+          res.send(rows);
+
+      })
+      .catch(err => {
+          console.log(err);
+      });
+};
+
 
 // Update a Campus by the id in the request
 exports.change = (req, res) => {

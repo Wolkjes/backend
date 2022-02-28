@@ -12,6 +12,9 @@ module.exports = app => {
     router.put("/:sensor_id", sensor.change);
 
     router.delete("/:sensor_id", sensor.delete);
+    
+    router.get("/get/:sensor_id", sensor.findhim)
 
     app.use('/wolkjes/sensor', router);
+    
 }
