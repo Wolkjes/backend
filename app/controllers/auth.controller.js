@@ -7,7 +7,7 @@ const Op = db.Sequelize.Op;
 var jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 
-exports.signin = (req, res) => {
+exports.login = (req, res) => {
   User.findOne({
     where: {
       email: req.body.email
@@ -15,7 +15,7 @@ exports.signin = (req, res) => {
   })
     .then(user => {
       if (!user) {
-        return res.status(404).send({ message: "User Not found." });
+        return res.status(404).send({ message: "Invalid User or Password" });
       }
 
       var passwordIsValid = bcrypt.compareSync(
@@ -26,21 +26,21 @@ exports.signin = (req, res) => {
       if (!passwordIsValid) {
         return res.status(401).send({
           accessToken: null,
-          message: "Invalid Password"
+          message: "Invalid User or Password"
         });
       }
 
-      var token = jwt.sign({ id: user.id }, config.secret, {
+      var token = jwt.sign({ email: user.email }, config.secret, {
         expiresIn: 86400 // 24 hours
       });
 
       res.status(200).send({
-        id: user.id,
         username: user.username,
         email: user.email,
         role: user.role,
         accessToken: token
       });
+
     })
     .catch(err => {
       res.status(500).send({ message: err.message });
