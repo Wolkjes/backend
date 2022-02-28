@@ -1,5 +1,6 @@
 const dbConfig = require("../config/db.config.js");
 const pg = require('pg');
+const res = require("express/lib/response");
 
 const config = {
   host: dbConfig.HOST,
@@ -77,40 +78,85 @@ exports.findOne = (req, res) => {
 // Update a Campus by the id in the request
 exports.change = (req, res) => {
   console.log("query to update a sensor");
+  console.log("query to update a sensor");
+  console.log("query to update a sensor");
   const sensor_id = req.params.sensor_id;
-  console.log(req.params.sensor_id)
   const newS = req.body.new;
   const campus_id = req.body.campus_id;
   const lokaal = req.body.lokaal;
-  var lokaal_id = null;
-  var aantal = 0;
+  let lokaal_id = 0;
+  let test = 0;
+  let aantal = 0;
 
-  const query = "select lokaal_id from lokaal as l  inner join campus as c using(campus_id) where campus_id = " + campus_id + " and lokaal_naam = '" + lokaal + "'";
+  const querySearch = "select lokaal_id from lokaal as l  inner join campus as c using(campus_id) where campus_id = " + campus_id + " and lokaal_naam = '" + lokaal + "'";
 
-  client.query(query).then(data => {
-    lokaal_id = data.rows[0].lokaal_id;
+    client.query(querySearch).then(dataSearch => {
+      if (lokaal_id === 0){
+        if (dataSearch.rows.length === 0){
+        
+          const addLokaalQuery = "INSERT INTO lokaal(campus_id, lokaal_naam) VALUES (" + campus_id + ",'" +  lokaal + "');";
+      
+          client.query(addLokaalQuery, (err) => {
+            if (err) {
+                console.error(err);
+            }
+            const queryLokaal_id = "select * from lokaal order by lokaal_id desc limit 1";
+    
+            client.query(queryLokaal_id).then(dataLokaal => {
+              lokaal_id = dataLokaal.rows[0].lokaal_id;  
+              console.log(lokaal_id);
+              const queryHoogste = "select max(id) from lokaal as l inner join campus as c using(campus_id) inner join sensor as s using(lokaal_id) where campus_id =" + campus_id;
+              client.query(queryHoogste).then(data => {   
+              aantal = data.rows[0].max+1;
+            
+              console.log(lokaal_id);
+              console.log(aantal);
+              console.log(sensor_id);
+            
+                    const queryUpdate = "UPDATE sensor SET lokaal_id='" + lokaal_id + "', new=" + newS + ", id=" + aantal + " WHERE sensor_id='" + sensor_id + "'";
+            
+                    client.query(queryUpdate, (err) => {
+                      if (err) {
+                          console.error(err);
+                      }else{
+                          console.log("ok");
+                          res.send("ok");
+                      }
+                    });
+            
+                  }).catch(err => {
+                    console.log(err);
+                  });
+            })  
+          })
 
-      const queryHoogste = "select max(id) from lokaal as l inner join campus as c using(campus_id) inner join sensor as s using(lokaal_id) where campus_id =" + campus_id;
-      client.query(queryHoogste).then(data => {   
-        aantal = data.rows[0].max+1;
-
-        const queryUpdate = "UPDATE sensor SET lokaal_id='" + lokaal_id + "', new=" + newS + ", id=" + aantal + " WHERE sensor_id='" + sensor_id + "'";
-
-        client.query(queryUpdate, (err) => {
-          if (err) {
-              console.error(err);
-          }else{
-              console.log("ok");
-              res.send("ok");
-          }
-        });
-
-      }).catch(err => {
-        console.log(err);
-      });
-    }).catch(err => {
-      console.log(err);
-    });
+        }else{
+          lokaal_id = dataSearch.rows[0].lokaal_id;
+          const queryHoogste = "select max(id) from lokaal as l inner join campus as c using(campus_id) inner join sensor as s using(lokaal_id) where campus_id =" + campus_id;
+          client.query(queryHoogste).then(data => {   
+          aantal = data.rows[0].max+1;
+        
+          console.log(lokaal_id);
+          console.log(aantal);
+          console.log(sensor_id);
+        
+                const queryUpdate = "UPDATE sensor SET lokaal_id='" + lokaal_id + "', new=" + newS + ", id=" + aantal + " WHERE sensor_id='" + sensor_id + "'";
+        
+                client.query(queryUpdate, (err) => {
+                  if (err) {
+                      console.error(err);
+                  }else{
+                      console.log("ok");
+                      res.send("ok");
+                  }
+                });
+        
+              }).catch(err => {
+                console.log(err);
+              });
+        }
+      }
+    })
 };
 
 
