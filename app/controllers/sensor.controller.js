@@ -59,7 +59,7 @@ exports.findAll = (req, res) => {
 
 // Find a single Campus with an id
 exports.findOne = (req, res) => {
-  const query = "SELECT * FROM sensor where sensor_id='" + req.params.sensor_id + "'";
+  const query = "SELECT * FROM sensor INNER JOIN lokaal using(lokaal_id)  where sensor_id='" + req.params.sensor_id + "'";
 
   client.query(query)
       .then(data => {
