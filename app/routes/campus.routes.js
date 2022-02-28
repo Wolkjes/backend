@@ -7,7 +7,7 @@ module.exports = app => {
         );
         next();
       });
-      
+
     const campus = require("../controllers/campus.controller.js");
 
     var userRouter = require("express").Router();
@@ -23,6 +23,6 @@ module.exports = app => {
     userRouter.get("/latest", campus.findLatest);
     userRouter.get("/:campus_id", campus.findOne);
     
-    app.use("/wolkjes/campus", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    app.use("/wolkjes/campus", [authJwt.verifyToken], userRouter);
     app.use("/wolkjes/campus", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }
