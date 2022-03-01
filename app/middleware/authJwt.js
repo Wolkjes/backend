@@ -24,21 +24,26 @@ verifyToken = (req, res, next) => {
 };
 
 isAdmin = (req, res, next) => {
-  User.findOne({
-    where: {
-      email: req.email
-    }
-  }).then(user => {
-    if (user.role === "admin") {
-      next();
+  try {
+    User.findOne({
+      where: {
+        email: req.email
+      }
+    }).then(user => {
+      if (user.role === "admin") {
+        next();
+        return;
+      }
+      res.status(403).send({
+        message: "Admin role required"
+      });
       return;
-    }
-
-    res.status(403).send({
-      message: "Admin role required"
     });
-    return;
-  });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message
+    });
+  }
 };
 
 const authJwt = {
