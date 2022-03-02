@@ -13,10 +13,27 @@ const client = new pg.Client(config);
 
 client.connect();
 
+const mqtt = require('mqtt');
+
+const host = '188.166.43.149';
+const port = '1883';
+const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+
+const connectUrl = `mqtt://${host}:${port}`
+const clientMQTT = mqtt.connect(connectUrl, {
+  clientId,
+  clean: false,
+  connectTimeout: 4000,
+  username: 'emqx',
+  password: 'public',
+  keepalive: 20000,
+  reconnectPeriod: 1000,
+})
+
 // Create and Save a new Campus
 exports.create = (req, res) => {
   console.log(`Running query to create campus PostgreSQL server: ${config.host}`);
-  
+  console.log(req.body)
   var name = req.body.name;
   var warning = 700;
   var critical_value = 800;
@@ -137,17 +154,13 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   console.log(`Running query to delete campuses PostgreSQL server: ${config.host}`)
   const campus_id = req.params.campus_id;
-  const queryTussenTabel = "DELETE FROM campus_persoon WHERE campus_id=" + campus_id;
   const query = "DELETE FROM campus WHERE campus_id=" + campus_id;
 
-  client.query(queryTussenTabel, (err) => {
-    if (err) {
-      console.error(err);
-    }else{
       client.query(query, (err) => {
         if (err) {
             console.error(err);
         }else{
+          clientMQTT.publish(req.body.campus_naam + "/new", JSON.stringify({"key": "new","value": true}))
           const queryGet = "select * from campus order by campus_id asc limit 1";
     
           client.query(queryGet).then(data => {
@@ -156,6 +169,4 @@ exports.delete = (req, res) => {
           })
         }
       });
-    }
-  })
 };

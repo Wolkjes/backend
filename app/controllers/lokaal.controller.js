@@ -13,16 +13,11 @@ const client = new pg.Client(config);
 
 client.connect();
 
-
-const { json } = require('express/lib/response');
 const mqtt = require('mqtt');
 
 const host = '188.166.43.149';
 const port = '1883';
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
-
-
-const lokalen = new Map();
 
 const connectUrl = `mqtt://${host}:${port}`
 const clientMQTT = mqtt.connect(connectUrl, {
