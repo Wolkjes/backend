@@ -137,24 +137,25 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   console.log(`Running query to delete campuses PostgreSQL server: ${config.host}`)
   const campus_id = req.params.campus_id;
-
+  const queryTussenTabel = "DELETE FROM campus_persoon WHERE campus_id=" + campus_id;
   const query = "DELETE FROM campus WHERE campus_id=" + campus_id;
 
-  client.query(query, (err) => {
+  client.query(queryTussenTabel, (err) => {
     if (err) {
-        console.error(err);
+      console.error(err);
     }else{
-      const queryGet = "select * from campus order by campus_id asc limit 1";
-
-      client.query(queryGet)
-      .then(data => {
-          const rows = data.rows;
-          res.send(rows);
-
-      })
-      .catch(err => {
-          console.log(err);
+      client.query(query, (err) => {
+        if (err) {
+            console.error(err);
+        }else{
+          const queryGet = "select * from campus order by campus_id asc limit 1";
+    
+          client.query(queryGet).then(data => {
+              const rows = data.rows;
+              res.send(rows);
+          })
+        }
       });
     }
-  });
+  })
 };

@@ -163,9 +163,8 @@ exports.findAll = (req, res) => {
 
 // Delete a lokaal with the specified id in the request
 exports.delete = (req, res) => {
-    console.log(`Running query to delete a sensor from PostgreSQL server: ${config.host}`);
+    console.log(`Running query to delete a sensor and lokaal from PostgreSQL server: ${config.host}`);
     const lokaal_id = req.params.lokaal_id;
-    console.log(req);
 
   const querySensor = "DELETE FROM sensor WHERE lokaal_id=" + lokaal_id;
 
@@ -179,7 +178,6 @@ exports.delete = (req, res) => {
             if (err) {
                 console.error(err);
             }else{
-                console.log(req.body.campus_naam + "/" + req.body.lokaal_naam + "/new")
                 clientMQTT.publish(req.body.campus_naam + "/" + req.body.lokaal_naam + "/new", JSON.stringify({"key": "new","value": true}))
                 res.send({"value": "Delete succesvol"});
             }

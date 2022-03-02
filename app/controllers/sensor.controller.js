@@ -97,8 +97,6 @@ exports.findhim = (req, res) => {
 // Update a sensor by the id in the request
 exports.change = (req, res) => {
   console.log("query to update a sensor");
-  console.log("query to update a sensor");
-  console.log("query to update a sensor");
   const sensor_id = req.params.sensor_id;
   const newS = req.body.new;
   const campus_id = req.body.campus_id;
@@ -123,7 +121,6 @@ exports.change = (req, res) => {
     
             client.query(queryLokaal_id).then(dataLokaal => {
               lokaal_id = dataLokaal.rows[0].lokaal_id;  
-              console.log(lokaal_id);
               const queryHoogste = "select max(id) from lokaal as l inner join campus as c using(campus_id) inner join sensor as s using(lokaal_id) where campus_id =" + campus_id;
               client.query(queryHoogste).then(data => {   
               aantal = data.rows[0].max+1;
@@ -134,7 +131,7 @@ exports.change = (req, res) => {
                       if (err) {
                           console.error(err);
                       }else{
-                          console.log("ok");
+
                           res.send("ok");
                       }
                     });
@@ -151,17 +148,12 @@ exports.change = (req, res) => {
           client.query(queryHoogste).then(data => {   
           aantal = data.rows[0].max+1;
         
-          console.log(lokaal_id);
-          console.log(aantal);
-          console.log(sensor_id);
-        
                 const queryUpdate = "UPDATE sensor SET lokaal_id='" + lokaal_id + "', new=" + newS + ", id=" + aantal + " WHERE sensor_id='" + sensor_id + "'";
         
                 client.query(queryUpdate, (err) => {
                   if (err) {
                       console.error(err);
                   }else{
-                      console.log("ok");
                       res.send("ok");
                   }
                 });
