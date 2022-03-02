@@ -4,5 +4,7 @@ module.exports = app => {
 
     router.post("/", user.create);
 
+    router.get("/:campus_id", user.getAll);
+
     app.use("/wolkjes/user", router);
 }
