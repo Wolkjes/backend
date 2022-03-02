@@ -2,7 +2,7 @@
 
 To get all the node files first run:
 ```
-npm install express sequelize pg pg-hstore cors jsonwebtoken bcryptjs --save
+npm install express sequelize pg pg-hstore cors jsonwebtoken bcryptjs mqtt --save
 ```
 
 ```
