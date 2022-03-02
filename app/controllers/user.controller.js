@@ -59,3 +59,24 @@ exports.create = (req, res) => {
 
     });
   };
+
+  //get all Users from the active campus
+exports.getAll = (req, res) => {
+  var campus_id = req.params.campus_id;
+
+  const query = "SELECT persoon_id, username, email, role FROM persoon INNER JOIN campus_persoon using(persoon_id) WHERE campus_id = " + campus_id + ""
+
+  client.query(query)
+    .then(data => {
+      const rows = data.rows;
+
+      rows.map(row => {
+
+      })
+
+      res.send(rows);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+}
