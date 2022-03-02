@@ -128,10 +128,6 @@ exports.change = (req, res) => {
               client.query(queryHoogste).then(data => {   
               aantal = data.rows[0].max+1;
             
-              console.log(lokaal_id);
-              console.log(aantal);
-              console.log(sensor_id);
-            
                     const queryUpdate = "UPDATE sensor SET lokaal_id='" + lokaal_id + "', new=" + newS + ", id=" + aantal + " WHERE sensor_id='" + sensor_id + "'";
             
                     client.query(queryUpdate, (err) => {
