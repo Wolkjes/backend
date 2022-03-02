@@ -6,5 +6,9 @@ module.exports = app => {
 
     router.get("/:campus_id", user.getAll);
 
+    router.put("/:persoon_id", user.update)
+
+    router.delete("/:persoon_id", user.delete)
+
     app.use("/wolkjes/user", router);
 }
