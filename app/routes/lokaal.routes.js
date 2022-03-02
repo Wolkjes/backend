@@ -11,7 +11,7 @@ module.exports = app => {
 
     // router.put("/:lokaal_id", lokaal.update);
 
-    // router.delete("/:lokaal_id", lokaal.delete);
+    router.delete("/:lokaal_id", lokaal.delete);
 
     app.use('/wolkjes/lokaal', router);
 }

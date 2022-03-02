@@ -14,7 +14,7 @@ const client = new pg.Client(config);
 
 client.connect();
 
-// Create and Save a new Campus
+// Create and Save a new sensor
 exports.create = (req, res) => {
   console.log(`Running query create sensor to PostgreSQL server: ${config.host}`);
   
@@ -35,7 +35,7 @@ exports.create = (req, res) => {
   });
 };
 
-// Retrieve all Campus from the database.
+// Retrieve all sensors from the database.
 exports.findAll = (req, res) => {
   console.log(`Running query get all sensors to PostgreSQL server: ${config.host}`);
 
@@ -57,7 +57,7 @@ exports.findAll = (req, res) => {
       });
 };
 
-// Find a single Campus with an id
+// Find a single sensor with an id
 exports.findOne = (req, res) => {
   const query = "SELECT * FROM sensor INNER JOIN lokaal using(lokaal_id)  where sensor_id='" + req.params.sensor_id + "'";
   
@@ -94,7 +94,7 @@ exports.findhim = (req, res) => {
 };
 
 
-// Update a Campus by the id in the request
+// Update a sensor by the id in the request
 exports.change = (req, res) => {
   console.log("query to update a sensor");
   console.log("query to update a sensor");
@@ -179,7 +179,7 @@ exports.change = (req, res) => {
 };
 
 
-// Delete a Campus with the specified id in the request
+// Delete a sensor with the specified id in the request
 exports.delete = (req, res) => {
   const campus_id = req.params.campus_id;
 
