@@ -9,6 +9,8 @@ module.exports = app => {
 
     router.get("/:sensor_id", sensor.findOne);
 
+    router.get("/getSensorId/:lokaal_id", sensor.findSensorId);
+
     router.put("/:sensor_id", sensor.change);
 
     router.delete("/:sensor_id", sensor.delete);

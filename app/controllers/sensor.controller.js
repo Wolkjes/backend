@@ -14,6 +14,23 @@ const client = new pg.Client(config);
 
 client.connect();
 
+exports.findSensorId = (req, res) => {
+  console.log(`Running query get sensor by lokaalid to PostgreSQL server: ${config.host}`);
+  
+  var lokaal_id = req.params.lokaal_id;
+
+  const query = "SELECT * FROM sensor where lokaal_id=" + lokaal_id;
+
+
+  client.query(query, (err, data) => {
+    if (err) {
+        console.error(err);
+    }else{
+        res.send(data.rows);
+    }
+  });
+}
+
 // Create and Save a new sensor
 exports.create = (req, res) => {
   console.log(`Running query create sensor to PostgreSQL server: ${config.host}`);
