@@ -9,7 +9,7 @@ module.exports = app => {
 
     // router.get("/:lokaal_id", lokaal.findOne);
 
-    // router.put("/:lokaal_id", lokaal.update);
+    router.put("/:lokaal_id", lokaal.update);
 
     router.delete("/:lokaal_id", lokaal.delete);
 

@@ -128,33 +128,25 @@ exports.findAll = (req, res) => {
 //       });
 // };
 
-// // Update a Campus by the id in the request
-// exports.update = (req, res) => {
-//   const campus_id = req.params.campus_id;
-//   const name = req.body.name;
+// Update a Lokaal by the id in the request
+exports.update = (req, res) => {
+  console.log(`Running query to update lokaal from PostgreSQL server: ${config.host}`);
 
-//   const query = "UPDATE campus SET name='" + name + "' WHERE campus_id=" + campus_id;
-//   const queryGet = "SELECT * FROM campus where campus_id=" + campus_id;
+  const lokaal_id = req.params.lokaal_id;
+  const lokaal_naam = req.body.lokaal_naam;
+  const sensor_id = req.body.sensor_id;
 
-//   client.query(query, (err) => {
-//     if (err) {
-//         console.error(err);
-//     }else{
-//       client.query(queryGet)
-//       .then(data => {
-//           const rows = data.rows;
+  const query = "UPDATE lokaal SET lokaal_naam='" + lokaal_naam + "' WHERE lokaal_id=" + lokaal_id;
 
-//           rows.map(row => {
-//               console.log(`Read: ${JSON.stringify(row)}`);
-//           });
-//           res.send(rows);
-//       })
-//       .catch(err => {
-//           console.log(err);
-//       });
-//     }
-//   });
-// };
+  client.query(query, (err) => {
+    if (err) {
+        console.error(err);
+    }else{
+        clientMQTT.publish("new/"+sensor_id, JSON.stringify({"key": "new","value": false, "lokaal": lokaal_naam}))
+        res.send({"value": "ok"})
+    }
+  });
+};
 
 // Delete a lokaal with the specified id in the request
 exports.delete = (req, res) => {
@@ -173,7 +165,7 @@ exports.delete = (req, res) => {
             if (err) {
                 console.error(err);
             }else{
-                clientMQTT.publish(req.body.campus_naam + "/" + req.body.lokaal_naam + "/new", JSON.stringify({"key": "new","value": true}))
+                clientMQTT.publish(req.body.campus_naam + "/" + req.body.lokaal_naam + "/new", JSON.stringify({"key": "new","value": true, "lokaal": ""}))
                 res.send({"value": "Delete succesvol"});
             }
         });
