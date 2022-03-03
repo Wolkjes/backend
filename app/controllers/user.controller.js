@@ -16,7 +16,7 @@ client.connect();
 var bcrypt = require("bcryptjs");
 const { user } = require("../models/index.js");
 const res = require("express/lib/response");
-const { password } = require("pg/lib/defaults");
+const { password, rows } = require("pg/lib/defaults");
 
 
 
@@ -113,16 +113,37 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
   console.log(`Running query to delete a user PostgreSQL server: ${config.host}`);
 
-  const persoon_id = req.params.persoon_id;
+  const persoon_id = req.body.user_id;
+  const campus_id = req.body.campus_id;
+  
 
-    query = "DELETE FROM persoon WHERE persoon_id=" + persoon_id;
-
-
-  client.query(query, (err) => {
-    if (err) {
+  //Check if user is in multiple campusses 
+  queryCheck = "SELECT * FROM campus_persoon WHERE persoon_id=" + persoon_id
+  client.query(queryCheck)
+  .then(data => {
+    if (data.rows.length <= 1){
+      //user is only in one campus..
+      //Delete user
+      query = "DELETE FROM persoon WHERE persoon_id=" + persoon_id;
+        client.query(query, (err) => {
+        if (err) {
         console.error(err);
-    }else{
+      }else{
+          res.send({"value": "ok"})
+      }
+      });
+  
+    } else {
+      //user is in multiple campusses so only delete the user field in campus_persoon
+     //verwijder user van de juiste campus in de tussentabel
+      queryTussentabel = "DELETE FROM campus_persoon WHERE persoon_id=" + persoon_id + " AND campus_id=" + campus_id;
+      client.query(queryTussentabel, (err) => {
+      if (err) {
+        console.error(err);
+      } else {
         res.send({"value": "ok"})
+      }
+  }); 
     }
-  });
+  })
 };

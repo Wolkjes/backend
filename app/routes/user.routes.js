@@ -8,7 +8,7 @@ module.exports = app => {
 
     router.put("/:persoon_id", user.update)
 
-    router.delete("/:persoon_id", user.delete)
+    router.delete("/", user.delete)
 
     app.use("/wolkjes/user", router);
 }
