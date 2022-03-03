@@ -45,6 +45,7 @@ const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
 
 const lokalen = new Map();
+const TimePassed = new Map();
 
 const connectUrl = `mqtt://${host}:${port}`
 const client = mqtt.connect(connectUrl, {
@@ -57,7 +58,7 @@ const client = mqtt.connect(connectUrl, {
   reconnectPeriod: 1000,
 })
 console.log('connecting');
-
+setInterval(checktimePassed, 5000);
 
 
 client.on('connect', () => {
@@ -70,10 +71,13 @@ client.on('connect', () => {
 client.on('message', (topic, message) => {
     const Co2Values = new Map();
     let jsonMessage = JSON.parse(message);
-    let destination = topic.split("/")[1];
+    let campus = topic.split("/")[0]
+    let destination = campus + "/" + topic.split("/")[1];
     let teller = 0;
     let vorigeWaarde = 0;
     let returnValue = 0;
+    var today = new Date();
+    TimePassed.set(destination, today)
 
     if (lokalen.has(destination) == false){
         Co2Values.set("waarde",jsonMessage.value);
@@ -88,7 +92,6 @@ client.on('message', (topic, message) => {
         Co2Values.set("output",lokalen.get(destination).get("output"));
         lokalen.set(destination, Co2Values);
     }
-
     let lokaal = lokalen.get(destination);
     if (jsonMessage.value >=  jsonMessage.critical){
       if(vorigeWaarde+100 < jsonMessage.value){
@@ -101,9 +104,7 @@ client.on('message', (topic, message) => {
           lokaal.set("output", 50);
           lokaal.set("teller", teller);
         }
-      }
-
-        
+      }        
     }else{
       if(lokaal.get("output") > 20){
         lokaal.set("output",20)
@@ -113,7 +114,6 @@ client.on('message', (topic, message) => {
         teller ++;
         if (teller >= 6){
           returnValue = lokaal.get("output")
-          console.log(returnValue);
           if(returnValue != 0){
             returnValue -= 10 
             lokaal.set("output", returnValue)
@@ -124,6 +124,7 @@ client.on('message', (topic, message) => {
         lokaal.set("teller", teller)
       }
     }
+    console.log("Ventilatie staat op " + lokaal.get("output") + "%");
     lokalen.set(destination, lokaal);
 });
 
@@ -138,3 +139,25 @@ client.on('error', () => {
 client.on('close', () => {
   console.log('connection closed');
 });
+
+function checktimePassed(){
+  var today = new Date()
+  for (let [key, value] of TimePassed) {
+    previeusDateTime = value
+    var sensor = lokalen.get(key).get("sensor")
+    var verschil = (today.getTime()- previeusDateTime.getTime()) / 1000;
+    if(verschil > 11){
+      client.publish(key + "/offline", JSON.stringify({
+        "key": "offline"
+      }),{ retain: true })
+      TimePassed.delete(key)
+      lokalen.delete(key)
+    }
+  }
+  // previeusDateTime = TimePassed.get(lokaal)
+  // console.log((today.getTime()-previeusDateTime.getTime())/1000);
+  // TimePassed.set(lokaal,today)
+  // console.log(TimePassed);
+  
+  
+};

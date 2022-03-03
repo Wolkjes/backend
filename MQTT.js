@@ -7,6 +7,7 @@ const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
 
 const lokalen = new Map();
+const TimePassed = new Map();
 
 const connectUrl = `mqtt://${host}:${port}`
 const client = mqtt.connect(connectUrl, {
@@ -20,7 +21,7 @@ const client = mqtt.connect(connectUrl, {
 })
 console.log('connecting');
 
-
+setInterval(checktimePassed, 5000);
 
 client.on('connect', () => {
   console.log('connected');
@@ -32,11 +33,14 @@ client.on('connect', () => {
 client.on('message', (topic, message) => {
     const Co2Values = new Map();
     let jsonMessage = JSON.parse(message);
-    let destination = topic.split("/")[1];
+    let campus = topic.split("/")[0]
+    let destination = campus + "/" + topic.split("/")[1];
     let teller = 0;
     let vorigeWaarde = 0;
     let returnValue = 0;
-
+    var today = new Date();
+    TimePassed.set(destination, today)
+    Co2Values.set("campus",campus);
     if (lokalen.has(destination) == false){
         Co2Values.set("waarde",jsonMessage.value);
         Co2Values.set("teller",teller);
@@ -75,7 +79,6 @@ client.on('message', (topic, message) => {
         teller ++;
         if (teller >= 6){
           returnValue = lokaal.get("output")
-          console.log(returnValue);
           if(returnValue != 0){
             returnValue -= 10 
             lokaal.set("output", returnValue)
@@ -85,15 +88,15 @@ client.on('message', (topic, message) => {
         }
         lokaal.set("teller", teller)
       }
-      console.log(lokaal);
     }
     
     
-    console.log(lokalen);
     lokalen.set(destination, lokaal);
 
     
 });
+
+
 
 client.on('offline', () => {
   console.log('went offline');
@@ -106,3 +109,4 @@ client.on('error', () => {
 client.on('close', () => {
   console.log('connection closed');
 });
+
