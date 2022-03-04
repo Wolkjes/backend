@@ -18,31 +18,36 @@ verifyToken = (req, res, next) => {
         message: "Unauthorized!"
       });
     }
-    req.userId = decoded.id;
+    req.email = decoded.email;
     next();
   });
 };
 
-// isAdmin = (req, res, next) => {
-//   User.findByPk(req.userId).then(user => {
-//     user.getRoles().then(roles => {
-//       for (let i = 0; i < roles.length; i++) {
-//         if (roles[i].name === "admin") {
-//           next();
-//           return;
-//         }
-//       }
-
-//       res.status(403).send({
-//         message: "Require Admin Role!"
-//       });
-//       return;
-//     });
-//   });
-// };
+isAdmin = (req, res, next) => {
+  try {
+    User.findOne({
+      where: {
+        email: req.email
+      }
+    }).then(user => {
+      if (user.role === "admin") {
+        next();
+        return;
+      }
+      res.status(403).send({
+        message: "Admin role required"
+      });
+      return;
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message
+    });
+  }
+};
 
 const authJwt = {
   verifyToken: verifyToken,
-  // isAdmin: isAdmin
+  isAdmin: isAdmin
 };
 module.exports = authJwt;
