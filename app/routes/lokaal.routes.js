@@ -17,8 +17,6 @@ module.exports = app => {
 
     // enkel voor admin
     // adminRouter.post("/", lokaal.create);
-    // adminRouter.put("/:lokaal_id", lokaal.update);
-    // adminRouter.delete("/:lokaal_id", lokaal.delete);
     
     //enkel voor admin
     adminRouter.put("/:lokaal_id", lokaal.update);
