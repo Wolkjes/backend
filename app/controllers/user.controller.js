@@ -46,12 +46,13 @@ exports.create = (req, res) => {
     var campus_id = req.body.campus_id;
     var persoon_id;
 
-    const query = "INSERT INTO persoon(username, email, password, role) VALUES('" + username + "','" + email + "','" + password + "','" + role + "') ON CONFLICT DO NOTHING";
+    const query = "INSERT INTO persoon(username, email, password, role) VALUES('" + username + "','" + email + "','" + password + "','" + role + "')";
   
   
     client.query(query, (err) => {
       if (err) {
           console.error(err);
+          res.send({"value":"Deze user bestaat al"});
       } 
       else{
           const queryGetIdFromEmail = "SELECT persoon_id FROM persoon WHERE email='" + email + "'";
