@@ -142,7 +142,7 @@ exports.update = (req, res) => {
     if (err) {
         console.error(err);
     }else{
-        clientMQTT.publish("new/"+sensor_id, JSON.stringify({"key": "new","value": false, "lokaal": lokaal_naam}))
+        clientMQTT.publish("new/"+sensor_id, JSON.stringify({"key": "new","value": false, "lokaal": lokaal_naam}),{retain: true})
         res.send({"value": "ok"})
     }
   });
@@ -165,7 +165,7 @@ exports.delete = (req, res) => {
             if (err) {
                 console.error(err);
             }else{
-                clientMQTT.publish(req.body.campus_naam + "/" + req.body.lokaal_naam + "/new", JSON.stringify({"key": "new","value": true, "lokaal": ""}))
+                clientMQTT.publish(req.body.campus_naam + "/" + req.body.lokaal_naam + "/new", JSON.stringify({"key": "new","value": true, "lokaal": ""}),{retain: true})
                 res.send({"value": "Delete succesvol"});
             }
         });
