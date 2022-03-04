@@ -141,7 +141,7 @@ function berekenVentilatie(topic, message){
   let lokaal = lokalen.get(destination);
   TimePassed.set(destination, today)
 
-  if(today.getDay() != 0 || today.getDay() != 6){
+  if(today.getDay() != 0 && today.getDay() != 6){
     
     if (lokalen.has(destination) == false){
         Co2Values.set("waarde",jsonMessage.value);
@@ -164,39 +164,27 @@ function berekenVentilatie(topic, message){
     let warning = VentilatieWaarde.get(campus).get("minder")
     let low = VentilatieWaarde.get(campus).get("goed")
 
-    console.log(low +"/"+ warning + "/" + critical + "/")
     lokaal = lokalen.get(destination);
     if (jsonMessage.value >=  jsonMessage.critical){
-      if(vorigeWaarde+100 < jsonMessage.value){
-        if(teller >= 6){
-          returnValue = lokaal.get("output");
-          returnValue += 10; 
-          lokaal.set("output", returnValue);
-        }else{
-          teller++;
-          lokaal.set("output", critical);
-          lokaal.set("teller", teller);
-        }
-      }        
+      lokaal.set("output", critical);    
+    }else if(jsonMessage.value >=  jsonMessage.warning){
+      lokaal.set("output", warning);
     }else{
-      if(lokaal.get("output") > low){
-        lokaal.set("output",low)
-        lokaal.set("teller", 0)
-      }else{
-        teller = lokaal.get("teller");
-        teller ++;
-        if (teller >= 6){
-          returnValue = lokaal.get("output")
-          if(returnValue != 0){
-            returnValue -= 10 
-            lokaal.set("output", returnValue)
-          }else{
-            teller = 0;
-          }
-        }
-        lokaal.set("teller", teller)
-      }
+      lokaal.set("output", low)
     }
+  }else{
+
+    
+    Co2Values.set("waarde",jsonMessage.value);
+    Co2Values.set("teller",0);
+    Co2Values.set("output",0);
+    if(!VentilatieWaarde.has(campus)){
+      setVentilatiewaardes(campus,20,40,80);
+    }
+    lokalen.set(destination, Co2Values);
+    
+    lokaal = lokalen.get(destination);
+
   }
   console.log("Ventilatie staat op " + lokaal.get("output") + "%");
 
