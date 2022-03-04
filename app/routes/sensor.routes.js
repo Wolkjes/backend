@@ -18,21 +18,15 @@ module.exports = app => {
     adminRouter.put("/:sensor_id", sensor.change);
     adminRouter.delete("/:sensor_id", sensor.delete);
 
+
     // ook voor user
     userRouter.get("/:sensor_id", sensor.findOne);
     userRouter.get("/", sensor.findAll);
     userRouter.get("/:sensor_id", sensor.findOne);
+    userRouter.get("/getSensorId/:lokaal_id", sensor.findSensorId);
+    userRouter.get("/get/:sensor_id", sensor.findhim)
 
-    router.get("/:sensor_id", sensor.findOne);
-
-    router.get("/getSensorId/:lokaal_id", sensor.findSensorId);
-
-    router.put("/:sensor_id", sensor.change);
-
-    router.delete("/:sensor_id", sensor.delete);
-    
-    router.get("/get/:sensor_id", sensor.findhim)
-
-    app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    // app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    app.use("/wolkjes/sensor", [authJwt.verifyToken], userRouter);
     app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }

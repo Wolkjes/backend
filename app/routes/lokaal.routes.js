@@ -8,6 +8,8 @@ module.exports = app => {
         next();
       });
 
+      
+
     const lokaal = require("../controllers/lokaal.controller.js");
 
     var userRouter = require("express").Router();
@@ -17,6 +19,10 @@ module.exports = app => {
     // adminRouter.post("/", lokaal.create);
     // adminRouter.put("/:lokaal_id", lokaal.update);
     // adminRouter.delete("/:lokaal_id", lokaal.delete);
+    
+    //enkel voor admin
+    adminRouter.put("/:lokaal_id", lokaal.update);
+    adminRouter.delete("/:lokaal_id", lokaal.delete);
 
     // ook voor user
     userRouter.get("/:campus_id", lokaal.findAll);
@@ -24,10 +30,8 @@ module.exports = app => {
 
     // router.get("/:lokaal_id", lokaal.findOne);
 
-    router.put("/:lokaal_id", lokaal.update);
 
-    router.delete("/:lokaal_id", lokaal.delete);
-
-    app.use("/wolkjes/lokaal", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    // app.use("/wolkjes/lokaal", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    app.use("/wolkjes/lokaal", [authJwt.verifyToken], userRouter);
     app.use("/wolkjes/lokaal", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }
