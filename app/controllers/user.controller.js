@@ -19,6 +19,20 @@ const res = require("express/lib/response");
 const { password, rows } = require("pg/lib/defaults");
 
 
+exports.getAllUsers = (req, res) => {
+  console.log(`Running query to get all users PostgreSQL server: ${config.host}`);
+
+  const query = "SELECT persoon_id, username, email, role FROM persoon";
+
+  client.query(query)
+    .then(data => {
+      const rows = data.rows;
+      res.send(rows);
+    })
+    .catch(err => {
+      console.log(err);
+    })
+}
 
 //Create new user in db
 exports.create = (req, res) => {
@@ -58,6 +72,21 @@ exports.create = (req, res) => {
 
     });
   };
+
+  exports.tussenTabel = (req, res) => {
+
+    campus_id = req.body.campus_id;
+    persoon_id = req.body.persoon_id;
+
+    const querycampus_persoon= "INSERT INTO campus_persoon(campus_id, persoon_id) VALUES(" + campus_id + ", " + persoon_id + ") ON CONFLICT DO NOTHING";
+    client.query(querycampus_persoon, (err) => {
+      if (err) {
+        console.error(err);
+      }else {
+        res.send({"value": "ok"})
+      }
+    })
+  }
 
   //get all Users from the active campus
 exports.getAll = (req, res) => {
@@ -108,6 +137,31 @@ exports.update = (req, res) => {
     }
   });
 };
+
+exports.addToCampus = (req, res) => {
+
+  console.log("query to insert to tussentabel");
+
+  const campus_id = req.params.campus_id;
+  const persoon_id = req.body.persoon_id;
+
+  const query = "SELECT * FROM campus_persoon where campus_id = " + campus_id + " and persoon_id = " + persoon_id + ";";
+
+  client.query(query).then(data => {
+    if(data.rows.length === 1){
+      res.send({"value":"Al toegevoegd"})
+    }else{
+      const insertQuery = "INSERT INTO campus_persoon(campus_id, persoon_id) VALUES(" + campus_id + "," + persoon_id + ")";
+      client.query(insertQuery, (err) => {
+        if(err){
+          console.err(err);
+        }else{
+          res.send({"value": "ok"});
+        }
+      })
+    }
+  })
+}
 
 // Delete a user by the id in the request
 exports.delete = (req, res) => {
