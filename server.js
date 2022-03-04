@@ -44,8 +44,9 @@ const port = '1883'
 const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
 
-const lokalen = new Map();
-const TimePassed = new Map();
+var lokalen = new Map();
+var TimePassed = new Map();
+var VentilatieWaarde = new Map();
 
 const connectUrl = `mqtt://${host}:${port}`
 const client = mqtt.connect(connectUrl, {
@@ -65,68 +66,21 @@ client.on('connect', () => {
   console.log('connected');
 
   client.subscribe('+/+/co2');
-
+  client.subscribe('+/ventilatie/+');
 });
 
 client.on('message', (topic, message) => {
-    const Co2Values = new Map();
-    let jsonMessage = JSON.parse(message);
-    let campus = topic.split("/")[0]
-    let destination = campus + "/" + topic.split("/")[1];
-    let teller = 0;
-    let vorigeWaarde = 0;
-    let returnValue = 0;
-    var today = new Date();
-    TimePassed.set(destination, today)
+  let destination = topic.split("/")[2];
+  if(destination == "co2"){
+    berekenVentilatie(topic, message);
+  }else{
+    changeVentilatieWaardes(topic, message);
+    
+  }
 
-    if (lokalen.has(destination) == false){
-        Co2Values.set("waarde",jsonMessage.value);
-        Co2Values.set("teller",teller);
-        Co2Values.set("output",0);
-        lokalen.set(destination, Co2Values);
-    }else{
-        vorigeWaarde = lokalen.get(destination).get("waarde");
-        teller = lokalen.get(destination).get("teller");
-        Co2Values.set("waarde",jsonMessage.value);
-        Co2Values.set("teller",teller);
-        Co2Values.set("output",lokalen.get(destination).get("output"));
-        lokalen.set(destination, Co2Values);
-    }
-    let lokaal = lokalen.get(destination);
-    if (jsonMessage.value >=  jsonMessage.critical){
-      if(vorigeWaarde+100 < jsonMessage.value){
-        if(teller >= 6){
-          returnValue = lokaal.get("output");
-          returnValue += 10; 
-          lokaal.set("output", returnValue);
-        }else{
-          teller++;
-          lokaal.set("output", 50);
-          lokaal.set("teller", teller);
-        }
-      }        
-    }else{
-      if(lokaal.get("output") > 20){
-        lokaal.set("output",20)
-        lokaal.set("teller", 0)
-      }else{
-        teller = lokaal.get("teller");
-        teller ++;
-        if (teller >= 6){
-          returnValue = lokaal.get("output")
-          if(returnValue != 0){
-            returnValue -= 10 
-            lokaal.set("output", returnValue)
-          }else{
-            teller = 0;
-          }
-        }
-        lokaal.set("teller", teller)
-      }
-    }
-    console.log("Ventilatie staat op " + lokaal.get("output") + "%");
-    lokalen.set(destination, lokaal);
 });
+
+
 
 client.on('offline', () => {
   console.log('went offline');
@@ -154,10 +108,97 @@ function checktimePassed(){
       lokalen.delete(key)
     }
   }
-  // previeusDateTime = TimePassed.get(lokaal)
-  // console.log((today.getTime()-previeusDateTime.getTime())/1000);
-  // TimePassed.set(lokaal,today)
-  // console.log(TimePassed);
-  
-  
+  client.subscribe('+/ventilatie/+');
+  client.subscribe('+/+/co2');
 };
+
+function changeVentilatieWaardes(topic, message){
+  let campus = topic.split("/")[0];
+  let jsonMessage = JSON.parse(message);
+
+  setVentilatiewaardes(campus, jsonMessage.goed, jsonMessage.minder, jsonMessage.slecht);
+  
+  console.log("waarde word veranderd voor campus: " + campus )
+}
+
+function setVentilatiewaardes(campus, goed, minder, slecht){
+  var waardes = new Map();
+  waardes.set("goed", goed)
+  waardes.set("minder", minder);
+  waardes.set("slecht", slecht);
+  VentilatieWaarde.set(campus, waardes);
+};
+
+function berekenVentilatie(topic, message){
+  const Co2Values = new Map();
+  let jsonMessage = JSON.parse(message);
+  let campus = topic.split("/")[0]
+  let destination = campus + "/" + topic.split("/")[1];
+  let teller = 0;
+  let vorigeWaarde = 0;
+  let returnValue = 0;
+  var today = new Date();
+  let lokaal = lokalen.get(destination);
+  TimePassed.set(destination, today)
+
+  if(today.getDay() != 0 || today.getDay() != 6){
+    
+    if (lokalen.has(destination) == false){
+        Co2Values.set("waarde",jsonMessage.value);
+        Co2Values.set("teller",teller);
+        Co2Values.set("output",0);
+        if(!VentilatieWaarde.has(campus)){
+          setVentilatiewaardes(campus,20,40,80);
+        }
+        lokalen.set(destination, Co2Values);
+    }else{
+        vorigeWaarde = lokalen.get(destination).get("waarde");
+        teller = lokalen.get(destination).get("teller");
+        Co2Values.set("waarde",jsonMessage.value);
+        Co2Values.set("teller",teller);
+        Co2Values.set("output",lokalen.get(destination).get("output"));
+        lokalen.set(destination, Co2Values);
+    }
+
+    let critical = VentilatieWaarde.get(campus).get("slecht")
+    let warning = VentilatieWaarde.get(campus).get("minder")
+    let low = VentilatieWaarde.get(campus).get("goed")
+
+    console.log(low +"/"+ warning + "/" + critical + "/")
+    lokaal = lokalen.get(destination);
+    if (jsonMessage.value >=  jsonMessage.critical){
+      if(vorigeWaarde+100 < jsonMessage.value){
+        if(teller >= 6){
+          returnValue = lokaal.get("output");
+          returnValue += 10; 
+          lokaal.set("output", returnValue);
+        }else{
+          teller++;
+          lokaal.set("output", critical);
+          lokaal.set("teller", teller);
+        }
+      }        
+    }else{
+      if(lokaal.get("output") > low){
+        lokaal.set("output",low)
+        lokaal.set("teller", 0)
+      }else{
+        teller = lokaal.get("teller");
+        teller ++;
+        if (teller >= 6){
+          returnValue = lokaal.get("output")
+          if(returnValue != 0){
+            returnValue -= 10 
+            lokaal.set("output", returnValue)
+          }else{
+            teller = 0;
+          }
+        }
+        lokaal.set("teller", teller)
+      }
+    }
+  }
+  console.log("Ventilatie staat op " + lokaal.get("output") + "%");
+
+  lokalen.set(destination, lokaal);
+}
