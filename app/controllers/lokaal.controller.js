@@ -135,6 +135,8 @@ exports.update = (req, res) => {
   const lokaal_id = req.params.lokaal_id;
   const lokaal_naam = req.body.lokaal_naam;
   const sensor_id = req.body.sensor_id;
+  const campus_naam = req.body.campus_naam;
+  const oud_lokaal = req.body.oud_lokaal;
 
   const query = "UPDATE lokaal SET lokaal_naam='" + lokaal_naam + "' WHERE lokaal_id=" + lokaal_id;
 
@@ -142,7 +144,9 @@ exports.update = (req, res) => {
     if (err) {
         console.error(err);
     }else{
-        clientMQTT.publish("new/"+sensor_id, JSON.stringify({"key": "new","value": false, "lokaal": lokaal_naam}),{retain: true})
+        clientMQTT.publish(campus_naam + "/"+oud_lokaal + "/new", JSON.stringify({"key": "new","value": false, "lokaal": lokaal_naam}),{retain: true})
+        clientMQTT.publish(sensor_id + "/new", JSON.stringify({"key": "new","value": false, "lokaal": lokaal_naam}),{retain: true})
+        clientMQTT.publish(campus_naam + "/"+lokaal_naam + "/new", JSON.stringify({"key": "new","value": false}),{retain: true})
         res.send({"value": "ok"})
     }
   });
