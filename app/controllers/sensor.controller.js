@@ -47,7 +47,7 @@ exports.create = (req, res) => {
     if (err) {
         console.error(err);
     }else{
-        res.send("Added sensor");
+        res.send({"value": "Added sensor"});
     }
   });
 };
@@ -149,7 +149,7 @@ exports.change = (req, res) => {
                           console.error(err);
                       }else{
 
-                          res.send("ok");
+                          res.send({"value":"ok"});
                       }
                     });
             
@@ -171,7 +171,7 @@ exports.change = (req, res) => {
                   if (err) {
                       console.error(err);
                   }else{
-                      res.send("ok");
+                      res.send({"value":"ok"});
                   }
                 });
         
@@ -194,7 +194,7 @@ exports.delete = (req, res) => {
     if (err) {
         console.error(err);
     }else{
-      res.send("Delete succesvol");
+      res.send({"value":"Delete succesvol"});
     }
   });
 };
