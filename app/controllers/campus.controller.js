@@ -160,7 +160,7 @@ exports.delete = (req, res) => {
         if (err) {
             console.error(err);
         }else{
-          clientMQTT.publish(req.body.campus_naam + "/new", JSON.stringify({"key": "delete","value": true}))
+          clientMQTT.publish(req.body.campus_naam + "/new", JSON.stringify({"key": "delete","value": true}),{retain: true})
           const queryGet = "select * from campus order by campus_id asc limit 1";
     
           client.query(queryGet).then(data => {
