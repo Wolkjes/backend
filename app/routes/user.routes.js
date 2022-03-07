@@ -23,5 +23,5 @@ module.exports = app => {
 
     adminRouter.delete("/", user.delete);
 
-    app.use("/wolkjes/lokaal", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
+    app.use("/wolkjes/user", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }

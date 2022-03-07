@@ -12,9 +12,10 @@ module.exports = app => {
 
     var userRouter = require("express").Router();
     var adminRouter = require("express").Router();
+    var sensorRouter = require("express").Router();
 
     // enkel voor admin
-    adminRouter.post("/", sensor.create);
+    sensorRouter.post("/", sensor.create);
     adminRouter.put("/:sensor_id", sensor.change);
     adminRouter.delete("/:sensor_id", sensor.delete);
 
@@ -27,6 +28,7 @@ module.exports = app => {
     userRouter.get("/get/:sensor_id", sensor.findhim)
 
     // app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], userRouter);
+    app.use("/wolkjes/sensor", sensorRouter);
     app.use("/wolkjes/sensor", [authJwt.verifyToken], userRouter);
     app.use("/wolkjes/sensor", [authJwt.verifyToken, authJwt.isAdmin], adminRouter);
 }
