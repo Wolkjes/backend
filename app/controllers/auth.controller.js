@@ -30,7 +30,7 @@ exports.login = (req, res) => {
         });
       }
 
-      var token = jwt.sign({ email: user.email, role: user.role }, config.secret, {
+      var token = jwt.sign({ email: user.email, role: user.role, persoon_id: user.persoon_id }, config.secret, {
         expiresIn: 86400 // 24 hours
       });
 
