@@ -1,6 +1,6 @@
 FROM node:latest
 
-WORKDIR /backend
+WORKDIR /var/www/html/backend
 COPY . /var/www/html/backend
 
 RUN npm install express sequelize pg pg-hstore cors jsonwebtoken bcryptjs mqtt --save
