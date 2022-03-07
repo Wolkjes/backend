@@ -35,6 +35,7 @@ exports.create = (req, res) => {
   console.log(`Running query to create campus PostgreSQL server: ${config.host}`);
   console.log(req.body)
   var name = req.body.name;
+  var persoon_id = req.body.persoon_id;
   var warning = 700;
   var critical_value = 800;
 
@@ -54,8 +55,15 @@ exports.create = (req, res) => {
               console.log(`Read: ${JSON.stringify(row)}`);
           });
 
-          res.send(rows);
+          const queryTussenTabel = "INSERT INTO public.campus_persoon(campus_id, persoon_id) vALUES (" + rows[0].campus_id + ", " + persoon_id + ");"
 
+          client.query(queryTussenTabel, (err, data) => {
+            if (err) {
+              console.error(err);
+            }else{
+              res.send(rows);
+            }
+        })
       })
       .catch(err => {
           console.log(err);
@@ -67,8 +75,9 @@ exports.create = (req, res) => {
 // Retrieve all Campus from the database.
 exports.findAll = (req, res) => {
   console.log(`Running query to find all campuses PostgreSQL server: ${config.host}`);
+  const persoon_id = req.params.persoon_id
 
-  const query = "SELECT * FROM campus order by campus_id asc";
+  const query = "select * from campus_persoon inner join campus using(campus_id) where persoon_id = " + persoon_id;
 
   client.query(query)
       .then(data => {

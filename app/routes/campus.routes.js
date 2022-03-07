@@ -19,7 +19,7 @@ module.exports = app => {
     adminRouter.delete("/:campus_id", campus.delete);
 
     // ook voor user
-    userRouter.get("/", campus.findAll);
+    userRouter.get("/persoon/:persoon_id", campus.findAll);
     userRouter.get("/latest", campus.findLatest);
     userRouter.get("/:campus_id", campus.findOne);
     
