@@ -15,7 +15,7 @@ exports.login = (req, res) => {
   })
     .then(user => {
       if (!user) {
-        return res.status(404).send({ message: "Invalid User or Password" });
+        return res.status(401).send({ message: "Invalid User or Password" });
       }
 
       var passwordIsValid = bcrypt.compareSync(
