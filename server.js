@@ -1,11 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+var base = process.env['BASE'];
 
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:4200"
+  origin: "http://" + base + ":4200"
 };
 
 app.use(cors(corsOptions));
