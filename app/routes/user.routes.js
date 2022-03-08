@@ -13,7 +13,7 @@ module.exports = app => {
     
     adminRouter.post("/", user.create);
 
-    adminRouter.get("/:campus_id", user.getAll);
+    adminRouter.get("/:campus_id/:persoon_id", user.getAll);
 
     adminRouter.get("/", user.getAllUsers);
 
