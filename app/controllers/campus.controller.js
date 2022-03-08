@@ -75,7 +75,8 @@ exports.create = (req, res) => {
 // Retrieve all Campus from the database.
 exports.findAll = (req, res) => {
   console.log(`Running query to find all campuses PostgreSQL server: ${config.host}`);
-  const persoon_id = req.params.persoon_id
+  const persoon_id = req.params.persoon_id;
+  console.log(req.params)
 
   const query = "select * from campus_persoon inner join campus using(campus_id) where persoon_id = " + persoon_id;
 
