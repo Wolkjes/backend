@@ -39,13 +39,14 @@ exports.create = (req, res) => {
   var warning = 700;
   var critical_value = 800;
 
-  const query = "INSERT INTO campus(name, warning_value, critical_value) VALUES('" + name + "', " + warning + ", " + critical_value + ")  ON CONFLICT DO NOTHING";
+  const query = "INSERT INTO campus(name, warning_value, critical_value) VALUES('" + name + "', " + warning + ", " + critical_value + ")";
   const queryGet = "select * from campus order by campus_id desc limit 1";
 
 
   client.query(query, (err, data) => {
     if (err) {
         console.error(err);
+        res.send({"value":"Deze campus bestaat al"});
     }else{
       client.query(queryGet)
       .then(data => {
@@ -55,11 +56,12 @@ exports.create = (req, res) => {
               console.log(`Read: ${JSON.stringify(row)}`);
           });
 
-          const queryTussenTabel = "INSERT INTO public.campus_persoon(campus_id, persoon_id) vALUES (" + rows[0].campus_id + ", " + persoon_id + ");"
+          const queryTussenTabel = "INSERT INTO public.campus_persoon(campus_id, persoon_id) vALUES (" + rows[0].campus_id + ", " + persoon_id + ")";
 
           client.query(queryTussenTabel, (err, data) => {
             if (err) {
               console.error(err);
+              res.send({"value":"Deze campus bestaat al"});
             }else{
               res.send(rows);
             }
