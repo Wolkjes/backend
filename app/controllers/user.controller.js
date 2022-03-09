@@ -94,6 +94,8 @@ exports.getAll = (req, res) => {
   console.log(`Running query to get all user PostgreSQL server: ${config.host}`);
 
   var campus_id = req.params.campus_id;
+  var persoon_id = req.params.persoon_id;
+  console.log(persoon_id)
 
   const query = "SELECT persoon_id, username, email, role FROM persoon INNER JOIN campus_persoon using(persoon_id) WHERE campus_id = " + campus_id + ""
 
@@ -101,11 +103,18 @@ exports.getAll = (req, res) => {
     .then(data => {
       const rows = data.rows;
 
+      var adminInCampus = false;
       rows.map(row => {
-
+        if (row.persoon_id == persoon_id){
+          adminInCampus = true;
+        }
       })
 
-      res.send(rows);
+      if(adminInCampus){
+        res.send(rows);
+      } else {
+        res.send({"value" : "not authorized"})
+      }
     })
     .catch(err => {
       console.log(err);
