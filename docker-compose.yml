@@ -1,0 +1,16 @@
+version: "2.1"
+
+services:
+  node:
+    container_name: backend
+    build: .
+#   network_mode: "host"
+    working_dir: /app/backend
+    env_file: 
+      - .env
+    ports:
+      - 8080:8080
+#    environment:
+#      BASE: 188.166.43.149
+    restart: always
+    command: node server.js -h 0.0.0.0
