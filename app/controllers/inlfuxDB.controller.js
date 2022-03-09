@@ -7,7 +7,7 @@ exports.get = (req, res) => {
     var lokaal_naam = req.params.lokaal_naam;
     var campus_naam = req.params.campus_naam.replace("-", "+");
     console.log(campus_naam, lokaal_naam)
-    var url = `http://188.166.43.149:8086/query?q=SELECT+mean("value")as+co2+FROM+"mqtt_consumer"+WHERE+("topic"='${campus_naam}/${lokaal_naam}/co2')+AND+time>=now()-7d+and+time+<=+now()+GROUP+BY+time(10s)+fill(linear);&pretty=true&db=influx`
+    var url = `http://188.166.43.149:8086/query?q=SELECT+mean("value")as+co2+FROM+"mqtt_consumer"+WHERE+("topic"='${campus_naam}/${lokaal_naam}/co2')+AND+time>=now()-7d+and+time+<=+now()+GROUP+BY+time(1m)+fill(linear);&pretty=true&db=influx`
     axios.get(url).then((result) => {
         var values = result.data.results[0].series[0].values
         const header = result.data.results[0].series[0].columns;
