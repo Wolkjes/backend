@@ -1,8 +1,11 @@
+const db_pass = process.env['db_pass'];
+const BASE = process.env['BASE'];
+
 module.exports = {
-  HOST: "188.166.43.149",
+  HOST: "BASE",
   PORT: "5438",
   USER: "wolkje",
-  PASSWORD: "aMmmbcdMthiYr6zpdBz35FXsxeEfweR9W2yJUyHnpVZQYPZtzPdWkzvAaSenKprW",
+  PASSWORD: db_pass,
   DB: "wolkje",
   dialect: "postgres",
   pool: {
