@@ -2,7 +2,7 @@ const db_pass = process.env['db_pass'];
 const BASE = process.env['BASE'];
 
 module.exports = {
-  HOST: "BASE",
+  HOST: BASE,
   PORT: "5438",
   USER: "wolkje",
   PASSWORD: db_pass,
