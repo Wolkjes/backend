@@ -12,6 +12,23 @@ We will first install all the required modules, in the terminal run:
 npm install
 ```
 
+## db.config.js
+
+In the file `db.config.js` there are 2 variables you need to change. The host and the password and if you choose to change the user, you will also need to change the user.
+
+<img src="images/dbconfig.png"></img>
+
+The `HOST` is the IP of the server you normally just setup.
+
+The `PASSWORD` is the password that you gave when you configured the postgres in the docker-compose.yml file.
+
+And if you change the user of the database, you will have to set a `USER` too.
+<img src="images/yml.png"></img>
+
+## MQTT start
+
+In the root folder of the project there is a file named `MQTT.js`, in the file there is a line `const host = '188.166.43.149'`, you will need to change this host address. The IP you need to fill in, is the IP of the server where you deployed your docker compose file. If the server isn't running yet, i recommand you go do this right now.
+
 ## Run backend
 
 To run the backend you go to the terminal and run:
@@ -20,9 +37,11 @@ To run the backend you go to the terminal and run:
 node server.js
 ```
 
-## Frontend and server files
+## Frontend
 
 Clone the frontend from here: [https://github.com/Wolkjes/frontend] and follow the instructions in the README to start the frontend.
+
+## server
 
 Clone the server files from here: [https://github.com/Wolkjes/server] and follow the instructions in the README to run the docker-compose file.
 
