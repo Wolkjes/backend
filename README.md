@@ -27,7 +27,11 @@ And if you change the user of the database, you will have to set a `USER` too.
 
 ## MQTT start
 
-In the root folder of the project there is a file named `MQTT.js`, in the file there is a line `const host = '188.166.43.149'`, you will need to change this host address. The IP you need to fill in, is the IP of the server where you deployed your docker compose file. If the server isn't running yet, i recommand you go do this right now.
+In the root folder of the project there is a file named `MQTT.js`, in the file there is a line `const host = '188.166.43.149'`, you will need to change this host address.
+
+<img src="images/mqttHost.png"></img>
+
+The IP you need to fill in, is the IP of the server where you deployed your docker compose file. If the server isn't running yet, I recommand you go do this right now follow the read me of: [https://github.com/Wolkjes/server].
 
 ## Run backend
 
